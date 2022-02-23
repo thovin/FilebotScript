@@ -37,14 +37,18 @@ logOutput.setFormatter(new TimFormatter())
 log.addHandler(logOutput)
 log.info "\n\n\n\n**********Now Looking for Files**********"
 
+String root;
 log.info "\n**********Checking for TV Shows**********"
-process(TV_INPUT_PATH, 'TheTVDB', TV_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
+root = TV_INPUT_PATH
+process(root, 'TheTVDB', TV_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
 
 log.info "\n**********Checking for Movies**********"
-process(MOVIE_INPUT_PATH, 'TheMovieDB', MOVIE_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
+root = MOVIE_INPUT_PATH
+process(root, 'TheMovieDB', MOVIE_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
 
 log.info "\n**********Checking for Anime**********"
-process(ANIME_INPUT_PATH, 'AniDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
+root = ANIME_INPUT_PATH
+process(root, 'AniDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
 
 //TODO email/text if dir not empty?
 //TODO email/text if multiple options? (encompassed by above?)
@@ -64,5 +68,5 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
         else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
     }
 
-    if (dir.listFiles().length == 0) { dir.delete() }
+    if (dir.listFiles().length == 0 && !inPath.equals(root)) { dir.delete() }
 }
