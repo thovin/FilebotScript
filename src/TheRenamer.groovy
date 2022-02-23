@@ -37,18 +37,18 @@ logOutput.setFormatter(new TimFormatter())
 log.addHandler(logOutput)
 log.info "\n\n\n\n**********Now Looking for Files**********"
 
-String root;
+def root
 log.info "\n**********Checking for TV Shows**********"
 root = TV_INPUT_PATH
-process(root, 'TheTVDB', TV_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
+process(root, 'TheTVDB', TV_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false, root)
 
 log.info "\n**********Checking for Movies**********"
 root = MOVIE_INPUT_PATH
-process(root, 'TheMovieDB', MOVIE_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
+process(root, 'TheMovieDB', MOVIE_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false, root)
 
 log.info "\n**********Checking for Anime**********"
 root = ANIME_INPUT_PATH
-process(root, 'AniDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
+process(root, 'AniDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false, root)
 
 //TODO email/text if dir not empty?
 //TODO email/text if multiple options? (encompassed by above?)
@@ -56,7 +56,7 @@ process(root, 'AniDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
 log.info("**********now Exiting**********")
 
 
-private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn) {
+private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn, String root) {
     def allowedExtensions = ["mp4", "mkv", "avi", "srt"]
     File dir = new File(inPath)
     rename(folder:inPath, db:dbIn, output:outPath, format:formatIn, strict:strictIn)
@@ -64,7 +64,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
 
     leftovers.each {
         String name = it.getName()
-        if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn) }
+        if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn, root) }
         else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
     }
 
