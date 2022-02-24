@@ -52,17 +52,21 @@ process(TEST_INPUT_PATH, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
 log.info("**********now Exiting**********")
 
 
+
 private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn) {
     def allowedExtensions = ["mp4", "mkv", "avi", "srt"]
     File dir = new File(inPath)
-    rename(folder:inPath, db:dbIn, output:outPath, format:formatIn, strict:strictIn)
-    File[] leftovers = dir.listFiles()
+    //rename(folder:inPath, db:dbIn, output:outPath, format:formatIn, strict:strictIn)
+    File[] contents = dir.listFiles()
 
-    leftovers.each {
+    contents.each {
         String name = it.getName()
         if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn) }
         else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
+        else {rename(file:it.getPath(), db:dbIn, output:outPath, format:formatIn, strict:strictIn)}
     }
 
     if (dir.listFiles().length == 0) { dir.delete() }
+
+
 }
