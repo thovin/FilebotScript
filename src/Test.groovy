@@ -53,20 +53,35 @@ log.info("**********now Exiting**********")
 
 
 
-private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn) {
+private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn, String root) {
     def allowedExtensions = ["mp4", "mkv", "avi", "srt"]
     File dir = new File(inPath)
-    //rename(folder:inPath, db:dbIn, output:outPath, format:formatIn, strict:strictIn)
-    File[] contents = dir.listFiles()
+    if (!inPath.equals(root)) {
+        rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn)
 
-    contents.each {
-        String name = it.getName()
-        if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn) }
-        else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
-        else {rename(file:it.getPath(), db:dbIn, output:outPath, format:formatIn, strict:strictIn)}
+        File[] leftovers = dir.listFiles()
+
+        leftovers.each {
+            String name = it.getName()
+            if (it.isDirectory()) {
+                process(it.toString(), dbIn, outPath, formatIn, strictIn, root)
+            } else if (!allowedExtensions.any { name.contains(it) }) {
+                it.delete()
+            }
+        }
+
+        if (dir.listFiles().length == 0) {
+            dir.delete()
+        }
+    } else {
+        File[] contents = dir.listFiles()
+
+        contents.each {
+            String name = it.getName()
+            if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn, root) }
+            else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
+            else {rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)}
+        }
     }
-
-    if (dir.listFiles().length == 0) { dir.delete() }
-
 
 }
