@@ -1,3 +1,5 @@
+import groovy.transform.Field
+
 import java.text.SimpleDateFormat
 import java.util.logging.FileHandler
 import java.util.logging.Formatter
@@ -32,8 +34,8 @@ final String TV_AND_MOVIE_FORMAT = '{plex.tail}'
 final String ANIME_FORMAT = /{n.sortName('$2, $1')}\{n} - {s00e00} - {t}/
 
 final SimpleDateFormat timeFormat = new SimpleDateFormat("M/d/yy HH:mm:ss")
-def root = ""
-def anime = false
+@Field def root = ""
+@Field def anime = false
 
 FileHandler logOutput = new FileHandler(TEST_LOG_PATH, true)
 logOutput.setFormatter(new TimFormatter())
@@ -42,16 +44,17 @@ log.info "\n\n\n\n**********[" + timeFormat.format(new Date()) + "] Looking for 
 
 log.info "\n**********Checking for TV Shows**********"
 root = TEST_INPUT_PATH
-//process(root, 'TheTVDB', TEST_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false, root)
+//process(root, 'TheTVDB', TEST_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
 
 log.info "\n**********Checking for Movies**********"
 root = TEST_INPUT_PATH
-//process(root, 'TheMovieDB', TEST_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false, root)
+//process(root, 'TheMovieDB', TEST_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
 
 log.info "\n**********Checking for Anime**********"
 root = TEST_INPUT_PATH
 anime = true
-process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false, root)
+process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
+anime = false
 
 //TODO email/text if dir not empty?
 //TODO email/text if multiple options? (encompassed by above?)
@@ -60,12 +63,14 @@ log.info("**********[" + timeFormat.format(new Date()) + "] Exiting**********")
 
 
 
-private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn, String root) {
+private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn) {
     def allowedExtensions = ["mp4", "mkv", "avi", "srt"]
     File dir = new File(inPath)
     if (!inPath.equals(root)) {
         if (anime) {
-            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, )
+            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, order: 'Absolute')
+        } else {
+            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn)
         }
 
 
@@ -74,7 +79,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
         leftovers.each {
             String name = it.getName()
             if (it.isDirectory()) {
-                process(it.toString(), dbIn, outPath, formatIn, strictIn, root)
+                process(it.toString(), dbIn, outPath, formatIn, strictIn)
             } else if (!allowedExtensions.any { name.contains(it) }) {
                 it.delete()
             }
@@ -88,9 +93,16 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
 
         contents.each {
             String name = it.getName()
-            if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn, root) }
+            if (it.isDirectory()) { process(it.toString(), dbIn, outPath, formatIn, strictIn) }
             else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
-            else {rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)}
+            else {
+                if (anime) {
+                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, order: "Absolute")
+                } else {
+                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
+                }
+
+            }
         }
     }
 
