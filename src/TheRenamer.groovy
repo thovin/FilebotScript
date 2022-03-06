@@ -51,7 +51,7 @@ process(root, 'TheMovieDB', MOVIE_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
 log.info "\n**********Checking for Anime**********"
 root = ANIME_INPUT_PATH
 anime = true
-process(root, 'TheTVDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
+process(root, 'TheTVDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
 anime = false
 
 
