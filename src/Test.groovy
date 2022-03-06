@@ -75,9 +75,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
             rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn)
         }
 
-
         File[] leftovers = dir.listFiles()
-
         leftovers.each {
             String name = it.getName()
             if (it.isDirectory()) {
@@ -103,9 +101,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
                 } else {
                     rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
                 }
-
             }
         }
     }
-
 }
