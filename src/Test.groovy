@@ -30,7 +30,6 @@ final String MOVIE_OUTPUT_PATH = /\\mixvault\Plex\Data\Movies/
 final String ANIME_OUTPUT_PATH = /\\mixvault\Plex\Data\Anime/
 
 final String TV_AND_MOVIE_FORMAT = '{plex.tail}'
-//final String ANIME_FORMAT = /{n}\{n} - {s00e00} - {t}/
 final String ANIME_FORMAT = /{n.sortName('$2, $1')}\{n} - {s00e00} - {t}/
 
 final SimpleDateFormat timeFormat = new SimpleDateFormat("M/d/yy HH:mm:ss")
@@ -53,8 +52,11 @@ root = TEST_INPUT_PATH
 log.info "\n**********Checking for Anime**********"
 root = TEST_INPUT_PATH
 anime = true
-process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
+//process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
+process(root, 'TheTVDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
 anime = false
+
+//rename(folder: root, db: 'TheTVDB', output: TEST_OUTPUT_PATH, format: ANIME_FORMAT, strict: false, mapper:"AnimeList.AniDB")
 
 //TODO email/text if dir not empty?
 //TODO email/text if multiple options? (encompassed by above?)
@@ -68,7 +70,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
     File dir = new File(inPath)
     if (!inPath.equals(root)) {
         if (anime) {
-            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, order: 'Absolute')
+            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
         } else {
             rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn)
         }
