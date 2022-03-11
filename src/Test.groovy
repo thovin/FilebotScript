@@ -52,12 +52,14 @@ root = TEST_INPUT_PATH
 log.info "\n**********Checking for Anime**********"
 root = TEST_INPUT_PATH
 anime = true
+//process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
 process(root, 'TheTVDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
 anime = false
 
 //rename(folder: root, db: 'TheTVDB', output: TEST_OUTPUT_PATH, format: ANIME_FORMAT, strict: false, mapper:"AnimeList.AniDB")
 
-//TODO email/text/discord if dir not empty || multiple options?
+//TODO email/text if dir not empty?
+//TODO email/text if multiple options? (encompassed by above?)
 
 log.info("**********[" + timeFormat.format(new Date()) + "] Exiting**********")
 
@@ -95,7 +97,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
             else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
             else {
                 if (anime) {
-                    rename(file: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
+                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
                 } else {
                     rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
                 }
