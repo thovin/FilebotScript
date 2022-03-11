@@ -55,9 +55,6 @@ process(root, 'TheTVDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
 anime = false
 
 
-//TODO email/text if dir not empty?
-//TODO email/text if multiple options? (encompassed by above?)
-
 log.info("**********now Exiting**********")
 
 
@@ -93,7 +90,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
             else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
             else {
                 if (anime) {
-                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, order: "Absolute")
+                    rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
                 } else {
                     rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
                 }
