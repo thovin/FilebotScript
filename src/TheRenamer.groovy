@@ -90,7 +90,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
             else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
             else {
                 if (anime) {
-                    rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
+                    rename(file: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
                 } else {
                     rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
                 }
