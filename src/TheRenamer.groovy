@@ -34,6 +34,7 @@ final String ANIME_FORMAT = /{n.sortName('$2, $1')}\{n} - {s00e00} - {t}/
 final SimpleDateFormat timeFormat = new SimpleDateFormat("M/d/yy HH:mm:ss")
 @Field def root = ""
 @Field def anime = false
+@Field def mapper = ""
 
 FileHandler logOutput = new FileHandler(TEST_LOG_PATH, true)
 logOutput.setFormatter(new TimFormatter())
@@ -51,11 +52,12 @@ process(root, 'TheMovieDB', MOVIE_OUTPUT_PATH, TV_AND_MOVIE_FORMAT, false)
 log.info "\n**********Checking for Anime**********"
 root = ANIME_INPUT_PATH
 anime = true
+mapper = "[episode, AnimeList.AniDB]"
 process(root, 'TheTVDB', ANIME_OUTPUT_PATH, ANIME_FORMAT, false)
 anime = false
 
 
-log.info("**********now Exiting**********")
+log.info("**********[" + timeFormat.format(new Date()) + "] Exiting**********")
 
 
 private void process(String inPath, String dbIn, String outPath, String formatIn, boolean strictIn) {
@@ -63,7 +65,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
     File dir = new File(inPath)
     if (!inPath.equals(root)) {
         if (anime) {
-            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
+            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:mapper)
         } else {
             rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn)
         }
@@ -90,7 +92,7 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
             else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
             else {
                 if (anime) {
-                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
+                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:mapper)
                 } else {
                     rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
                 }

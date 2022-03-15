@@ -35,6 +35,7 @@ final String ANIME_FORMAT = /{n.sortName('$2, $1')}\{n} - {s00e00} - {t}/
 final SimpleDateFormat timeFormat = new SimpleDateFormat("M/d/yy HH:mm:ss")
 @Field def root = ""
 @Field def anime = false
+@Field def mapper = ""
 
 FileHandler logOutput = new FileHandler(TEST_LOG_PATH, true)
 logOutput.setFormatter(new TimFormatter())
@@ -53,13 +54,20 @@ log.info "\n**********Checking for Anime**********"
 root = TEST_INPUT_PATH
 anime = true
 //process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
+//mapper = "AnimeList.AniDB"
+//process(root, 'TheTVDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
+
+//mapper = "[episode, AnimeList.TheTVDB]"
+//mapper = "AnimeList.TheTVDB"
+//mapper = "[episode, AnimeList.AniDB]"
+mapper = "AnimeList.AniDB"
+//process(root, 'AniDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
 process(root, 'TheTVDB', TEST_OUTPUT_PATH, ANIME_FORMAT, false)
 anime = false
 
 //rename(folder: root, db: 'TheTVDB', output: TEST_OUTPUT_PATH, format: ANIME_FORMAT, strict: false, mapper:"AnimeList.AniDB")
 
-//TODO email/text if dir not empty?
-//TODO email/text if multiple options? (encompassed by above?)
+//TODO email/text/discord if dir not empty || multiple options?
 
 log.info("**********[" + timeFormat.format(new Date()) + "] Exiting**********")
 
@@ -70,7 +78,8 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
     File dir = new File(inPath)
     if (!inPath.equals(root)) {
         if (anime) {
-            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
+            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:mapper)
+//            rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:mapper, order:'Airdate')
         } else {
             rename(folder: inPath, db: dbIn, output: outPath, format: formatIn, strict: strictIn)
         }
@@ -97,7 +106,8 @@ private void process(String inPath, String dbIn, String outPath, String formatIn
             else if (!allowedExtensions.any {name.contains(it)}) { it.delete() }
             else {
                 if (anime) {
-                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:"AnimeList.AniDB")
+                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:mapper)
+//                    rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn, mapper:mapper, order:'Airdate')
                 } else {
                     rename(file: it.getPath(), db: dbIn, output: outPath, format: formatIn, strict: strictIn)
                 }
